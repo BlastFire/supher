@@ -1,0 +1,11 @@
+Superman
+    attack - 20
+    crit chance - 20%
+    deflect 5% ( returns dmg to the attacker )
+
+Batman
+    attack - 5
+    crit chance - 40% 
+    deflect - 35%
+
+    
