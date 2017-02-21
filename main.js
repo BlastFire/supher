@@ -37,7 +37,6 @@ var Hero = function (name) {
         const isCritOccured = (GameManager.getRandomNum(0, 1, false) <= this.critChance) ? true : false;
         const isDeflectOccured = (GameManager.getRandomNum(0, 1, false) <= this.deflect) ? true : false;
 
-
         let tmpAttackPwr = this.attackPwr;
 
         if (isCritOccured) tmpAttackPwr *= 2;
@@ -97,70 +96,77 @@ var batman = new Batman("Batman");
 
 //TODO
 const firstStrike = GameManager.getRandomNum(0, 1, true);
+if (firstStrike === batman.getFightStartingPos())
+    fight(superman, batman);
+else
+    fight(batman, superman);
 
-//main 
-log("The fight started !")
+function fight(ob1, ob2) {
+    //main 
+    log("The fight started !")
 
-log("Super man START stats - " + "hp: " + superman.getHealth() + " attack: " + superman.attackPwr);
-log("Batman man START stats - " + "hp: " + batman.getHealth() + " attack: " + batman.attackPwr);
+    log(ob1.getName() + " START stats - " + "hp: " + ob1.getHealth() + " attack: " + ob1.attackPwr);
+    log(ob2.getName() + " START stats - " + "hp: " + ob2.getHealth() + " attack: " + ob2.attackPwr);
 
-while (superman.getHealth() > 0 && batman.getHealth() > 0) {
-    //x--;
-    if (TurnManager.onePlaysNext) {
-        log("Superman BEFORE STRIKE stats - " + "hp: " + superman.getHealth());
-        let result = superman.attack();
-        log("Superman attack result");
-        log(result);
-        if (result.criticalStrike) {
-            log("superman strikes with critical strike (x2 dmg) " + result.attack);
-        }
-        if (result.deflect) {
-            log("batman deflects the damage of his attacker");
-            superman.updateHealth(result.attack);
-            if (superman.getHealth <= 0) {
-                superman.health = 0;
+    while (ob1.getHealth() > 0 && ob2.getHealth() > 0) {
+        if (TurnManager.onePlaysNext) {
+            log(ob1.getName() + " BEFORE STRIKE stats - " + "hp: " + ob1.getHealth());
+            let result = ob1.attack();
+            log(ob1.getName() + " attack result");
+            log(result);
+            if (result.criticalStrike) {
+                log(ob1.getName() + " strikes with critical strike (x2 dmg) " + result.attack);
             }
-            log("superman health is " + superman.getHealth());
-            TurnManager.switchPlayer();
-            continue;
-        }
-        batman.updateHealth(result.attack);
-
-        TurnManager.switchPlayer();
-    } else {
-        log("Batman BEFORE STRIKE stats - " + "hp: " + batman.getHealth());
-        let result = batman.attack();
-        log("batman attack result");
-        log(result);
-        if (result.criticalStrike) {
-            log("batman strikes with critical strike (x2 dmg)" + result.attack);
-        }
-        if (result.deflect) {
-            log("superman deflects the damage of his attacker");
-            batman.updateHealth(result.attack);
-            if (batman.getHealth <= 0) {
-                batman.health = 0;
+            if (result.deflect) {
+                log(ob2.getName() + " deflects the damage of his attacker");
+                ob1.updateHealth(result.attack);
+                if (ob1.getHealth <= 0) {
+                    ob1.health = 0;
+                }
+                log(ob1.getName() + " health is " + ob1.getHealth());
+                TurnManager.switchPlayer();
+                continue;
             }
-            log("batman health is " + batman.getHealth());
-            TurnManager.switchPlayer();
-            continue;
-        }
-        superman.updateHealth(result.attack);
+            ob2.updateHealth(result.attack);
 
-        TurnManager.switchPlayer();
+            TurnManager.switchPlayer();
+        } else {
+            log(ob2.getName() + " BEFORE STRIKE stats - " + "hp: " + ob2.getHealth());
+            let result = ob2.attack();
+            log(ob2.getName() + " attack result");
+            log(result);
+            if (result.criticalStrike) {
+                log(ob2.getName() + " strikes with critical strike (x2 dmg)" + result.attack);
+            }
+            if (result.deflect) {
+                log(ob1.getName() + " deflects the damage of his attacker");
+                ob2.updateHealth(result.attack);
+                if (ob2.getHealth <= 0) {
+                    ob2.health = 0;
+                }
+                log(ob2.getName() + " health is " + ob2.getHealth());
+                TurnManager.switchPlayer();
+                continue;
+            }
+            ob1.updateHealth(result.attack);
+
+            TurnManager.switchPlayer();
+        }
     }
+
+    log("The fight ended");
+
+    log(ob1.getName() + " End stats - " + "hp: " + ob1.getHealth());
+    log(ob2.getName() + " End stats - " + "hp: " + ob2.getHealth());
+
+    if (ob1.getHealth() <= 0) {
+        log(ob1.death());
+    } else {
+        log(ob2.death());
+    }
+
 }
 
-log("The fight ended");
-
-log("Super man End stats - " + "hp: " + superman.getHealth());
-log("Batman man End stats - " + "hp: " + batman.getHealth());
-
-if (superman.getHealth() <= 0) {
-    log(superman.death());
-} else {
-    log(batman.death());
-}
 
 
 
