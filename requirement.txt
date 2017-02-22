@@ -1,11 +1,23 @@
+Two heroes fight each other.
+Each of them attacks the other, at turns, until someone's health is depleted.
+Hero atacking first is chosen at random.
+Heroes have different stats, which makes the winner, unpredictable.
+
+GameManager - holding all the fight logic as well and some helper functions and properties.
+TurnManager - manages turns
+
+Heroes statistics:
+
 Superman
+    health - 200
     attack - 20
-    crit chance - 20%
+    critical chance - 20% chance to make critical strike ( doubles the attack damage )
     deflect 5% ( returns dmg to the attacker )
 
 Batman
+    health - 150
     attack - 5
-    crit chance - 40% 
-    deflect - 35%
+    critical chance - 40% chance to make critical strike ( doubles the attack damage )
+    deflect - 35% ( returns dmg to the attacker )
 
     

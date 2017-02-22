@@ -1,6 +1,7 @@
 const log = (data) => console.log(data);
 
 const GameManager = {
+    fightSpeed: 5000,
     getRandomNum: function (min, max, rounded) {
         if (rounded)
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -17,18 +18,22 @@ const GameManager = {
 
         log(ob1.getName() + " START stats - " + "hp: " + ob1.getHealth() + " attack: " + ob1.attackPwr);
         log(ob2.getName() + " START stats - " + "hp: " + ob2.getHealth() + " attack: " + ob2.attackPwr);
-        
-        while (ob1.getHealth() > 0 && ob2.getHealth() > 0) {
-            (TurnManager.onePlaysNext) ? this.round(ob1,ob2) : this.round(ob2, ob1);
-        }
+        log(" ");
 
-        log("The fight ended");
+        const myInterval = setInterval(function () {
+            if (ob1.getHealth() > 0 && ob2.getHealth() > 0) {
+                (TurnManager.onePlaysNext) ? GameManager.round(ob1, ob2) : GameManager.round(ob2, ob1);
+                log(" ");
+            } else {
+                clearInterval(myInterval);
 
-        log(ob1.getName() + " End stats - " + "hp: " + ob1.getHealth());
-        log(ob2.getName() + " End stats - " + "hp: " + ob2.getHealth());
+                log("The fight ended");
+                log(ob1.getName() + " End stats - " + "hp: " + ob1.getHealth());
+                log(ob2.getName() + " End stats - " + "hp: " + ob2.getHealth());
 
-        (ob1.getHealth() <= 0) ? log(ob1.death()) : log(ob2.death());
-
+                (ob1.getHealth() <= 0) ? log(ob1.death()) : log(ob2.death());
+            }
+        }, GameManager.fightSpeed);
     },
     round: function (attacker, enemy) {
         log(attacker.getName() + " BEFORE STRIKE stats - " + "hp: " + attacker.getHealth());
