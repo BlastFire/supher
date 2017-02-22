@@ -1,6 +1,5 @@
 const log = (data) => console.log(data);
 
-//init
 const GameManager = {
     getRandomNum: function (min, max, rounded) {
         if (rounded)
@@ -13,6 +12,46 @@ const GameManager = {
         copyOfParent.constructor = childObject;
         childObject.prototype = copyOfParent;
     },
+    mainFight: function (ob1, ob2) {
+        log("The fight started !")
+
+        log(ob1.getName() + " START stats - " + "hp: " + ob1.getHealth() + " attack: " + ob1.attackPwr);
+        log(ob2.getName() + " START stats - " + "hp: " + ob2.getHealth() + " attack: " + ob2.attackPwr);
+        
+        while (ob1.getHealth() > 0 && ob2.getHealth() > 0) {
+            (TurnManager.onePlaysNext) ? this.round(ob1,ob2) : this.round(ob2, ob1);
+        }
+
+        log("The fight ended");
+
+        log(ob1.getName() + " End stats - " + "hp: " + ob1.getHealth());
+        log(ob2.getName() + " End stats - " + "hp: " + ob2.getHealth());
+
+        (ob1.getHealth() <= 0) ? log(ob1.death()) : log(ob2.death());
+
+    },
+    round: function (attacker, enemy) {
+        log(attacker.getName() + " BEFORE STRIKE stats - " + "hp: " + attacker.getHealth());
+        let result = attacker.attack();
+        log(attacker.getName() + " attack result");
+        log(result);
+        if (result.criticalStrike) {
+            log(attacker.getName() + " strikes with critical strike (x2 dmg) " + result.attack);
+        }
+        if (result.deflect) {
+            log(enemy.getName() + " deflects the damage of his attacker");
+            attacker.updateHealth(result.attack);
+            if (attacker.getHealth <= 0) {
+                attacker.health = 0;
+            }
+            log(attacker.getName() + " health is " + attacker.getHealth());
+            TurnManager.switchPlayer();
+            return;
+        }
+        enemy.updateHealth(result.attack);
+
+        TurnManager.switchPlayer();
+    }
 };
 
 const TurnManager = {
@@ -20,7 +59,7 @@ const TurnManager = {
     switchPlayer: function () {
         this.onePlaysNext = !this.onePlaysNext;
     }
-}
+};
 
 //parent class
 var Hero = function (name) {
@@ -28,6 +67,7 @@ var Hero = function (name) {
     //using privileged function, so it can have access to private data
     // we dont want starting position to be altered 
     const fightStartingPos = 0;
+
     this.getFightStartingPos = function () {
         return fightStartingPos;
     }
@@ -43,6 +83,7 @@ var Hero = function (name) {
 
         let health = this.health;
 
+        //returning an object with results from the attack
         return {
             criticalStrike: isCritOccured,
             deflect: isDeflectOccured,
@@ -91,90 +132,14 @@ Hero.prototype.updateHealth = function (hpVal) {
     return this.health;
 }
 
+//creating the objects
 var superman = new Superman("Superman");
 var batman = new Batman("Batman");
 
-//TODO
+//determine who going to attack first
 const firstStrike = GameManager.getRandomNum(0, 1, true);
+//batman uses inhertited function
 if (firstStrike === batman.getFightStartingPos())
-    fight(superman, batman);
+    GameManager.mainFight(superman, batman);
 else
-    fight(batman, superman);
-
-function fight(ob1, ob2) {
-    //main 
-    log("The fight started !")
-
-    log(ob1.getName() + " START stats - " + "hp: " + ob1.getHealth() + " attack: " + ob1.attackPwr);
-    log(ob2.getName() + " START stats - " + "hp: " + ob2.getHealth() + " attack: " + ob2.attackPwr);
-
-    while (ob1.getHealth() > 0 && ob2.getHealth() > 0) {
-        if (TurnManager.onePlaysNext) {
-            log(ob1.getName() + " BEFORE STRIKE stats - " + "hp: " + ob1.getHealth());
-            let result = ob1.attack();
-            log(ob1.getName() + " attack result");
-            log(result);
-            if (result.criticalStrike) {
-                log(ob1.getName() + " strikes with critical strike (x2 dmg) " + result.attack);
-            }
-            if (result.deflect) {
-                log(ob2.getName() + " deflects the damage of his attacker");
-                ob1.updateHealth(result.attack);
-                if (ob1.getHealth <= 0) {
-                    ob1.health = 0;
-                }
-                log(ob1.getName() + " health is " + ob1.getHealth());
-                TurnManager.switchPlayer();
-                continue;
-            }
-            ob2.updateHealth(result.attack);
-
-            TurnManager.switchPlayer();
-        } else {
-            log(ob2.getName() + " BEFORE STRIKE stats - " + "hp: " + ob2.getHealth());
-            let result = ob2.attack();
-            log(ob2.getName() + " attack result");
-            log(result);
-            if (result.criticalStrike) {
-                log(ob2.getName() + " strikes with critical strike (x2 dmg)" + result.attack);
-            }
-            if (result.deflect) {
-                log(ob1.getName() + " deflects the damage of his attacker");
-                ob2.updateHealth(result.attack);
-                if (ob2.getHealth <= 0) {
-                    ob2.health = 0;
-                }
-                log(ob2.getName() + " health is " + ob2.getHealth());
-                TurnManager.switchPlayer();
-                continue;
-            }
-            ob1.updateHealth(result.attack);
-
-            TurnManager.switchPlayer();
-        }
-    }
-
-    log("The fight ended");
-
-    log(ob1.getName() + " End stats - " + "hp: " + ob1.getHealth());
-    log(ob2.getName() + " End stats - " + "hp: " + ob2.getHealth());
-
-    if (ob1.getHealth() <= 0) {
-        log(ob1.death());
-    } else {
-        log(ob2.death());
-    }
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
+    GameManager.mainFight(batman, superman);
