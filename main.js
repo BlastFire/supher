@@ -1,7 +1,7 @@
 const log = (data) => console.log(data);
 
 const GameManager = {
-    fightSpeed: 5000,
+    fightSpeed: 2000,
     getRandomNum: function (min, max, rounded) {
         if (rounded)
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -36,7 +36,7 @@ const GameManager = {
         }, GameManager.fightSpeed);
     },
     round: function (attacker, enemy) {
-        log(attacker.getName() + " BEFORE STRIKE stats - " + "hp: " + attacker.getHealth());
+        //log(attacker.getName() + " BEFORE STRIKE stats - " + "hp: " + attacker.getHealth());
         let result = attacker.attack();
         log(attacker.getName() + " attack result");
         log(result);
@@ -54,6 +54,7 @@ const GameManager = {
             return;
         }
         enemy.updateHealth(result.attack);
+        log(enemy.getName() + " health is now " + enemy.getHealth())
 
         TurnManager.switchPlayer();
     }
