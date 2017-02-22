@@ -14,7 +14,7 @@ const GameManager = {
         childObject.prototype = copyOfParent;
     },
     mainFight: function (ob1, ob2) {
-        log("The fight started !")
+        log("The fight started !");
 
         log(ob1.getName() + " START stats - " + "hp: " + ob1.getHealth() + " attack: " + ob1.attackPwr);
         log(ob2.getName() + " START stats - " + "hp: " + ob2.getHealth() + " attack: " + ob2.attackPwr);
