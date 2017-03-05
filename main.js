@@ -1,7 +1,30 @@
 const log = (data) => console.log(data);
 
+var superman, batman;
+
 const GameManager = {
     fightSpeed: 2000,
+    heroFactory: null,
+    init: function () {
+        if (!this.heroFactory) {
+            heroFactory = new GameManager.HeroFactory();
+            superman = heroFactory.createHero("Superman", {health: 199});
+            batman = heroFactory.createHero("Batman", {attackPwr: 6});
+        } else {
+            log("already initialized");
+        }
+    },
+    HeroFactory: function () {
+        this.createHero = function (name, options) {
+            if (name === "Superman") {
+                return new Superman("Superman", options);
+            } else if (name === "Batman") {
+                return new Batman("Batman", options);
+            } else {
+                log("Unknown hero");
+            }
+        }
+    },
     getRandomNum: function (min, max, rounded) {
         if (rounded)
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -57,7 +80,7 @@ const GameManager = {
         log(enemy.getName() + " health is now " + enemy.getHealth())
 
         TurnManager.switchPlayer();
-    }
+    },
 };
 
 const TurnManager = {
@@ -99,24 +122,24 @@ var Hero = function (name) {
     };
 }
 
-var Superman = function (name) {
+var Superman = function (name, options) {
     Hero.call(this, name);
-    this.health = 200;
-    this.attackPwr = 20;
-    this.critChance = 0.2;
-    this.deflect = 0.35;
-    const fightStartingPos = 1;
+    this.health = options.health || 200;
+    this.attackPwr = options.attackPwr || 20;
+    this.critChance = options.critChance || 0.2;
+    this.deflect = options.deflect || 0.35;
+    const fightStartingPos = options.fightStartingPos || 1;
     this.getFightStartingPos = function () {
         return fightStartingPos;
     }
 }
 
-var Batman = function (name) {
+var Batman = function (name, options) {
     Hero.call(this, name);
-    this.health = 150;
-    this.attackPwr = 5;
-    this.critChance = 0.4;
-    this.deflect = 0.05;
+    this.health = options.health || 150;
+    this.attackPwr = options.attackPwr || 5;
+    this.critChance = options.critChance || 0.4;
+    this.deflect = options.deflect || 0.05;
 }
 
 //inheritance magic
@@ -139,8 +162,7 @@ Hero.prototype.updateHealth = function (hpVal) {
 }
 
 //creating the objects
-var superman = new Superman("Superman");
-var batman = new Batman("Batman");
+GameManager.init();
 
 //determine who going to attack first
 const firstStrike = GameManager.getRandomNum(0, 1, true);
